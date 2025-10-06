@@ -68,6 +68,29 @@ const tools = [
   },
   {
     id: 6,
+    name: "Art Styles",
+    description: "Browse community art styles",
+    link: "/art-styles",
+    icon: (
+      <svg className="w-6 h-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+    )
+  },
+  {
+    id: 7,
+    name: "Effects",
+    description: "Apply custom effects",
+    link: "/effects",
+    icon: (
+      <svg className="w-6 h-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+      </svg>
+    )
+  },
+  {
+    id: 8,
     name: "More Tools",
     description: "Discover additional features",
     link: "/more-tools",
