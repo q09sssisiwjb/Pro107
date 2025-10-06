@@ -207,6 +207,30 @@ Return only the enhanced prompt, nothing else.`;
         message: message.substring(0, 100) + (message.length > 100 ? "..." : "")
       });
 
+      // Send email using Resend
+      try {
+        const { getUncachableResendClient } = await import('./resend-client.js');
+        const { client: resend, fromEmail } = await getUncachableResendClient();
+        
+        await resend.emails.send({
+          from: fromEmail,
+          to: fromEmail,
+          subject: `Contact Form: ${subject}`,
+          html: `
+            <h2>New Contact Form Submission</h2>
+            <p><strong>From:</strong> ${name} (${email})</p>
+            <p><strong>Subject:</strong> ${subject}</p>
+            <p><strong>Message:</strong></p>
+            <p>${message.replace(/\n/g, '<br>')}</p>
+          `,
+        });
+        
+        console.log("Contact form email sent successfully");
+      } catch (emailError) {
+        console.error('Error sending email:', emailError);
+        // Continue even if email fails - don't block the response
+      }
+
       res.json({ 
         success: true, 
         message: "Contact form submitted successfully" 
