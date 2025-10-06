@@ -3346,7 +3346,7 @@ const TextToImageGenerator = () => {
                 data-testid="input-model-api-key"
               />
               <p className="text-xs text-muted-foreground">
-                Optional: Hugging Face API token for higher rate limits
+                Optional: Hugging Face API token for authentication
               </p>
             </div>
 
