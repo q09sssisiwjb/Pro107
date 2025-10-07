@@ -17,7 +17,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Shield, Users, Image as ImageIcon, Palette, BarChart3, CheckCircle, XCircle, Clock, Trash2, Ban, UserCheck, Eye, Send, Search } from "lucide-react";
+import { Shield, Users, Image as ImageIcon, Palette, BarChart3, CheckCircle, XCircle, Clock, Trash2, Ban, UserCheck, Eye, Send, Search, ChevronsUpDown, Check } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -108,7 +111,7 @@ export default function Admin() {
   });
   const [userSearch, setUserSearch] = useState("");
   const [artStyleSearch, setArtStyleSearch] = useState("");
-  const [recipientSearch, setRecipientSearch] = useState("");
+  const [recipientDropdownOpen, setRecipientDropdownOpen] = useState(false);
 
   const { data: isAdminData, isLoading: adminCheckLoading } = useQuery<{ isAdmin: boolean }>({
     queryKey: ["/api/admin/check", user?.email],
@@ -138,15 +141,6 @@ export default function Admin() {
       profile.email?.toLowerCase().includes(searchLower) ||
       profile.userId.toLowerCase().includes(searchLower) ||
       profile.location?.toLowerCase().includes(searchLower)
-    );
-  });
-
-  const filteredRecipients = profiles?.filter((profile) => {
-    if (!recipientSearch) return true;
-    const searchLower = recipientSearch.toLowerCase();
-    return (
-      profile.displayName?.toLowerCase().includes(searchLower) ||
-      profile.email?.toLowerCase().includes(searchLower)
     );
   });
 
@@ -930,45 +924,60 @@ export default function Admin() {
               <div className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="recipient-search">Search Users</Label>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="recipient-search"
-                        placeholder="Search by name or email..."
-                        value={recipientSearch}
-                        onChange={(e) => setRecipientSearch(e.target.value)}
-                        className="pl-10"
-                        data-testid="input-search-recipient"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
                     <Label htmlFor="recipient-user">Recipient User</Label>
-                    <Select
-                      value={messageForm.recipientUserId}
-                      onValueChange={(value) => setMessageForm({ ...messageForm, recipientUserId: value })}
-                    >
-                      <SelectTrigger id="recipient-user" data-testid="select-recipient-user">
-                        <SelectValue placeholder="Select a user" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {profilesLoading ? (
-                          <SelectItem value="loading" disabled>Loading users...</SelectItem>
-                        ) : filteredRecipients && filteredRecipients.length > 0 ? (
-                          filteredRecipients.map((profile) => (
-                            <SelectItem key={profile.userId} value={profile.userId}>
-                              {profile.displayName || profile.email || profile.userId}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <SelectItem value="no-users" disabled>
-                            {recipientSearch ? "No users match your search" : "No users available"}
-                          </SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
+                    <Popover open={recipientDropdownOpen} onOpenChange={setRecipientDropdownOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="recipient-user"
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={recipientDropdownOpen}
+                          className="w-full justify-between"
+                          data-testid="select-recipient-user"
+                        >
+                          {messageForm.recipientUserId
+                            ? profiles?.find((profile) => profile.userId === messageForm.recipientUserId)?.displayName || 
+                              profiles?.find((profile) => profile.userId === messageForm.recipientUserId)?.email ||
+                              "Select a user"
+                            : "Select a user"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0" align="start">
+                        <Command>
+                          <CommandInput placeholder="Search by name or email..." />
+                          <CommandList>
+                            <CommandEmpty>No users found.</CommandEmpty>
+                            <CommandGroup>
+                              {profilesLoading ? (
+                                <CommandItem disabled>Loading users...</CommandItem>
+                              ) : profiles && profiles.length > 0 ? (
+                                profiles.map((profile) => (
+                                  <CommandItem
+                                    key={profile.userId}
+                                    value={`${profile.displayName || ''} ${profile.email || ''} ${profile.userId}`}
+                                    onSelect={() => {
+                                      setMessageForm({ ...messageForm, recipientUserId: profile.userId });
+                                      setRecipientDropdownOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        messageForm.recipientUserId === profile.userId ? "opacity-100" : "opacity-0"
+                                      )}
+                                    />
+                                    {profile.displayName || profile.email || profile.userId}
+                                  </CommandItem>
+                                ))
+                              ) : (
+                                <CommandItem disabled>No users available</CommandItem>
+                              )}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
 
                   <div className="space-y-2">
