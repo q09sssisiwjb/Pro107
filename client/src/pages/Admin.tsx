@@ -108,6 +108,7 @@ export default function Admin() {
   });
   const [userSearch, setUserSearch] = useState("");
   const [artStyleSearch, setArtStyleSearch] = useState("");
+  const [recipientSearch, setRecipientSearch] = useState("");
 
   const { data: isAdminData, isLoading: adminCheckLoading } = useQuery<{ isAdmin: boolean }>({
     queryKey: ["/api/admin/check", user?.email],
@@ -137,6 +138,15 @@ export default function Admin() {
       profile.email?.toLowerCase().includes(searchLower) ||
       profile.userId.toLowerCase().includes(searchLower) ||
       profile.location?.toLowerCase().includes(searchLower)
+    );
+  });
+
+  const filteredRecipients = profiles?.filter((profile) => {
+    if (!recipientSearch) return true;
+    const searchLower = recipientSearch.toLowerCase();
+    return (
+      profile.displayName?.toLowerCase().includes(searchLower) ||
+      profile.email?.toLowerCase().includes(searchLower)
     );
   });
 
@@ -920,6 +930,21 @@ export default function Admin() {
               <div className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
+                    <Label htmlFor="recipient-search">Search Users</Label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="recipient-search"
+                        placeholder="Search by name or email..."
+                        value={recipientSearch}
+                        onChange={(e) => setRecipientSearch(e.target.value)}
+                        className="pl-10"
+                        data-testid="input-search-recipient"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
                     <Label htmlFor="recipient-user">Recipient User</Label>
                     <Select
                       value={messageForm.recipientUserId}
@@ -931,14 +956,16 @@ export default function Admin() {
                       <SelectContent>
                         {profilesLoading ? (
                           <SelectItem value="loading" disabled>Loading users...</SelectItem>
-                        ) : profiles && profiles.length > 0 ? (
-                          profiles.map((profile) => (
+                        ) : filteredRecipients && filteredRecipients.length > 0 ? (
+                          filteredRecipients.map((profile) => (
                             <SelectItem key={profile.userId} value={profile.userId}>
                               {profile.displayName || profile.email || profile.userId}
                             </SelectItem>
                           ))
                         ) : (
-                          <SelectItem value="no-users" disabled>No users available</SelectItem>
+                          <SelectItem value="no-users" disabled>
+                            {recipientSearch ? "No users match your search" : "No users available"}
+                          </SelectItem>
                         )}
                       </SelectContent>
                     </Select>
