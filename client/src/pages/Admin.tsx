@@ -626,15 +626,15 @@ export default function Admin() {
                     <div className="space-y-4">
                       {images.map((image) => (
                         <Card key={image.id} className="overflow-hidden" data-testid={`card-image-${image.id}`}>
-                          <div className="flex gap-4 p-4">
-                            <img 
-                              src={image.imageData} 
-                              alt={image.prompt} 
-                              className="w-24 h-24 object-cover rounded flex-shrink-0"
-                              data-testid={`img-preview-mobile-${image.id}`}
-                            />
-                            <div className="flex-1 min-w-0 space-y-2">
-                              <div>
+                          <div className="p-4 space-y-3">
+                            <div className="flex gap-3">
+                              <img 
+                                src={image.imageData} 
+                                alt={image.prompt} 
+                                className="w-20 h-20 object-cover rounded flex-shrink-0"
+                                data-testid={`img-preview-mobile-${image.id}`}
+                              />
+                              <div className="flex-1 min-w-0">
                                 <p className="font-medium text-sm truncate" data-testid={`text-prompt-mobile-${image.id}`}>
                                   {image.prompt}
                                 </p>
@@ -644,49 +644,46 @@ export default function Admin() {
                                 <p className="text-xs text-muted-foreground" data-testid={`text-user-mobile-${image.id}`}>
                                   {image.userDisplayName || "Anonymous"}
                                 </p>
+                                <div className="mt-1">
+                                  {getModerationStatusBadge(image.moderationStatus)}
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                {getModerationStatusBadge(image.moderationStatus)}
-                              </div>
-                              <div className="flex gap-2 flex-wrap">
-                                {image.moderationStatus !== "approved" && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => moderationMutation.mutate({ id: image.id, status: "approved" })}
-                                    disabled={moderationMutation.isPending}
-                                    data-testid={`button-approve-mobile-${image.id}`}
-                                    className="flex-1"
-                                  >
-                                    <CheckCircle className="w-4 h-4 mr-1" />
-                                    Approve
-                                  </Button>
-                                )}
-                                {image.moderationStatus !== "rejected" && (
-                                  <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    onClick={() => moderationMutation.mutate({ id: image.id, status: "rejected" })}
-                                    disabled={moderationMutation.isPending}
-                                    data-testid={`button-reject-mobile-${image.id}`}
-                                    className="flex-1"
-                                  >
-                                    <XCircle className="w-4 h-4 mr-1" />
-                                    Reject
-                                  </Button>
-                                )}
+                            </div>
+                            <div className="grid grid-cols-3 gap-2">
+                              {image.moderationStatus !== "approved" && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => moderationMutation.mutate({ id: image.id, status: "approved" })}
+                                  disabled={moderationMutation.isPending}
+                                  data-testid={`button-approve-mobile-${image.id}`}
+                                  className="w-full"
+                                >
+                                  <CheckCircle className="w-4 h-4" />
+                                </Button>
+                              )}
+                              {image.moderationStatus !== "rejected" && (
                                 <Button
                                   size="sm"
                                   variant="destructive"
-                                  onClick={() => deleteImageMutation.mutate(image.id)}
-                                  disabled={deleteImageMutation.isPending}
-                                  data-testid={`button-delete-mobile-${image.id}`}
-                                  className="flex-1"
+                                  onClick={() => moderationMutation.mutate({ id: image.id, status: "rejected" })}
+                                  disabled={moderationMutation.isPending}
+                                  data-testid={`button-reject-mobile-${image.id}`}
+                                  className="w-full"
                                 >
-                                  <Trash2 className="w-4 h-4 mr-1" />
-                                  Delete
+                                  <XCircle className="w-4 h-4" />
                                 </Button>
-                              </div>
+                              )}
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => deleteImageMutation.mutate(image.id)}
+                                disabled={deleteImageMutation.isPending}
+                                data-testid={`button-delete-mobile-${image.id}`}
+                                className="w-full"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
                             </div>
                           </div>
                         </Card>
