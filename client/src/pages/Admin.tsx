@@ -542,82 +542,84 @@ export default function Admin() {
                 <Skeleton className="h-96" />
               ) : images && images.length > 0 ? (
                 <>
-                  {/* Desktop Table View */}
-                  <ScrollArea className="h-[600px] hidden md:block">
-                    <div className="w-full overflow-x-auto">
-                      <Table className="min-w-full">
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="min-w-[80px]">Preview</TableHead>
-                            <TableHead className="min-w-[200px]">Prompt</TableHead>
-                            <TableHead className="min-w-[120px]">Model</TableHead>
-                            <TableHead className="min-w-[100px]">User</TableHead>
-                            <TableHead className="min-w-[120px]">Status</TableHead>
-                            <TableHead className="min-w-[200px]">Actions</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {images.map((image) => (
-                            <TableRow key={image.id} data-testid={`row-image-${image.id}`}>
-                              <TableCell>
-                                <img 
-                                  src={image.imageData} 
-                                  alt={image.prompt} 
-                                  className="w-16 h-16 object-cover rounded"
-                                  data-testid={`img-preview-${image.id}`}
-                                />
-                              </TableCell>
-                              <TableCell className="max-w-xs truncate" data-testid={`text-prompt-${image.id}`}>
-                                {image.prompt}
-                              </TableCell>
-                              <TableCell data-testid={`text-model-${image.id}`}>{image.model}</TableCell>
-                              <TableCell data-testid={`text-user-${image.id}`}>
-                                {image.userDisplayName || "Anonymous"}
-                              </TableCell>
-                              <TableCell>
-                                {getModerationStatusBadge(image.moderationStatus)}
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex gap-2 min-w-max">
-                                  {image.moderationStatus !== "approved" && (
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() => moderationMutation.mutate({ id: image.id, status: "approved" })}
-                                      disabled={moderationMutation.isPending}
-                                      data-testid={`button-approve-${image.id}`}
-                                    >
-                                      <CheckCircle className="w-4 h-4" />
-                                    </Button>
-                                  )}
-                                  {image.moderationStatus !== "rejected" && (
+                  {/* Desktop/Tablet Table View - with horizontal scroll */}
+                  <div className="hidden md:block">
+                    <div className="w-full overflow-x-auto border rounded-lg">
+                      <ScrollArea className="h-[600px]">
+                        <Table className="min-w-[900px]">
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="min-w-[80px]">Preview</TableHead>
+                              <TableHead className="min-w-[200px]">Prompt</TableHead>
+                              <TableHead className="min-w-[120px]">Model</TableHead>
+                              <TableHead className="min-w-[100px]">User</TableHead>
+                              <TableHead className="min-w-[120px]">Status</TableHead>
+                              <TableHead className="min-w-[200px]">Actions</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {images.map((image) => (
+                              <TableRow key={image.id} data-testid={`row-image-${image.id}`}>
+                                <TableCell>
+                                  <img 
+                                    src={image.imageData} 
+                                    alt={image.prompt} 
+                                    className="w-16 h-16 object-cover rounded"
+                                    data-testid={`img-preview-${image.id}`}
+                                  />
+                                </TableCell>
+                                <TableCell className="max-w-xs truncate" data-testid={`text-prompt-${image.id}`}>
+                                  {image.prompt}
+                                </TableCell>
+                                <TableCell data-testid={`text-model-${image.id}`}>{image.model}</TableCell>
+                                <TableCell data-testid={`text-user-${image.id}`}>
+                                  {image.userDisplayName || "Anonymous"}
+                                </TableCell>
+                                <TableCell>
+                                  {getModerationStatusBadge(image.moderationStatus)}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex gap-2 min-w-max">
+                                    {image.moderationStatus !== "approved" && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => moderationMutation.mutate({ id: image.id, status: "approved" })}
+                                        disabled={moderationMutation.isPending}
+                                        data-testid={`button-approve-${image.id}`}
+                                      >
+                                        <CheckCircle className="w-4 h-4" />
+                                      </Button>
+                                    )}
+                                    {image.moderationStatus !== "rejected" && (
+                                      <Button
+                                        size="sm"
+                                        variant="destructive"
+                                        onClick={() => moderationMutation.mutate({ id: image.id, status: "rejected" })}
+                                        disabled={moderationMutation.isPending}
+                                        data-testid={`button-reject-${image.id}`}
+                                      >
+                                        <XCircle className="w-4 h-4" />
+                                      </Button>
+                                    )}
                                     <Button
                                       size="sm"
                                       variant="destructive"
-                                      onClick={() => moderationMutation.mutate({ id: image.id, status: "rejected" })}
-                                      disabled={moderationMutation.isPending}
-                                      data-testid={`button-reject-${image.id}`}
+                                      onClick={() => deleteImageMutation.mutate(image.id)}
+                                      disabled={deleteImageMutation.isPending}
+                                      data-testid={`button-delete-image-${image.id}`}
                                     >
-                                      <XCircle className="w-4 h-4" />
+                                      <Trash2 className="w-4 h-4" />
                                     </Button>
-                                  )}
-                                  <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    onClick={() => deleteImageMutation.mutate(image.id)}
-                                    disabled={deleteImageMutation.isPending}
-                                    data-testid={`button-delete-image-${image.id}`}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </Button>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </ScrollArea>
                     </div>
-                  </ScrollArea>
+                  </div>
 
                   {/* Mobile Card View */}
                   <ScrollArea className="h-[600px] md:hidden">
