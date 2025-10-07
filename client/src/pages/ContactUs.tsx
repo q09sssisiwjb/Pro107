@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, MessageSquare } from "lucide-react";
+import { SiWhatsapp } from "react-icons/si";
 
 export default function ContactUs() {
   return (
@@ -21,8 +22,8 @@ export default function ContactUs() {
         </p>
       </div>
 
-      <div className="flex justify-center">
-        <Card className="p-6 max-w-md w-full" data-testid="contact-support-card">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        <Card className="p-6" data-testid="contact-support-card">
           <div className="flex items-start gap-4">
             <div className="p-2 bg-primary/10 rounded-lg">
               <MessageSquare className="w-6 h-6 text-primary" />
@@ -36,6 +37,27 @@ export default function ContactUs() {
               </p>
               <Button asChild variant="outline" size="sm" data-testid="button-support-chat">
                 <a href="/support">Open Support Chat</a>
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6" data-testid="contact-whatsapp-card">
+          <div className="flex items-start gap-4">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <SiWhatsapp className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2" data-testid="contact-whatsapp-title">
+                WhatsApp
+              </h3>
+              <p className="text-muted-foreground text-sm mb-3" data-testid="contact-whatsapp-description">
+                Chat with us directly on WhatsApp
+              </p>
+              <Button asChild variant="outline" size="sm" data-testid="button-whatsapp">
+                <a href="https://wa.me/917319294420" target="_blank" rel="noopener noreferrer">
+                  Open WhatsApp
+                </a>
               </Button>
             </div>
           </div>
