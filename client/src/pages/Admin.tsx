@@ -542,8 +542,8 @@ export default function Admin() {
                 <Skeleton className="h-96" />
               ) : images && images.length > 0 ? (
                 <>
-                  {/* Desktop/Tablet Table View - with horizontal scroll */}
-                  <div className="hidden md:block">
+                  {/* Desktop Table View - with horizontal scroll (large screens only) */}
+                  <div className="hidden lg:block">
                     <div className="w-full overflow-x-auto border rounded-lg">
                       <ScrollArea className="h-[600px]">
                         <Table className="min-w-[900px]">
@@ -621,8 +621,8 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  {/* Mobile Card View */}
-                  <ScrollArea className="h-[600px] md:hidden">
+                  {/* Mobile/Tablet Card View (all screens below 1024px) */}
+                  <ScrollArea className="h-[600px] lg:hidden">
                     <div className="space-y-4">
                       {images.map((image) => (
                         <Card key={image.id} className="overflow-hidden" data-testid={`card-image-${image.id}`}>
